@@ -1,0 +1,8 @@
+torch==2.2.0 --index-url https://download.pytorch.org/whl/cu121
+torchaudio==2.2.0 --index-url https://download.pytorch.org/whl/cu121
+pyannote.audio>=3.1.0
+runpod>=1.6.0
+requests>=2.28.0
+huggingface-hub>=0.20.0
+soundfile
+librosa
