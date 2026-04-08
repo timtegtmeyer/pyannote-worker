@@ -37,7 +37,13 @@ def _load_pipeline() -> Pipeline:
         return _pipeline
 
     hf_token = os.environ.get("HF_TOKEN")
-    log.info("Loading pyannote/speaker-diarization-3.1 ...")
+    if not hf_token:
+        raise RuntimeError(
+            "HF_TOKEN environment variable is not set. "
+            "Set it in RunPod template settings → Environment Variables."
+        )
+    log.info("Loading pyannote/speaker-diarization-3.1 (HF_TOKEN: %s...%s)",
+             hf_token[:5], hf_token[-4:])
     pipe = Pipeline.from_pretrained(
         "pyannote/speaker-diarization-3.1",
         token=hf_token,

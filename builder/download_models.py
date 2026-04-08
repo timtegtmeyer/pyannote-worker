@@ -16,6 +16,7 @@ if not hf_token:
 models = [
     "pyannote/speaker-diarization-3.1",
     "pyannote/segmentation-3.0",
+    "pyannote/speaker-diarization-community-1",
 ]
 
 for model_id in models:
