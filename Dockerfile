@@ -3,10 +3,9 @@ FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
-# System deps: ffmpeg (required by pyannote/torchaudio), wget,
-# cuda-nvrtc (libnvrtc.so — required by torchcodec which pyannote 4.x uses for audio decoding)
+# System deps: ffmpeg (required by pyannote/torchaudio), wget
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ffmpeg wget git cuda-nvrtc-12-8 \
+    ffmpeg wget git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
