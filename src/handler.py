@@ -105,7 +105,7 @@ def _debug_info() -> dict:
         "torch_version": torch.__version__,
         "cuda_available": cuda_available,
         "cuda_device": torch.cuda.get_device_name(0) if cuda_available else None,
-        "cuda_memory_gb": round(torch.cuda.get_device_properties(0).total_mem / 1e9, 1) if cuda_available else None,
+        "cuda_memory_gb": round(getattr(torch.cuda.get_device_properties(0), 'total_memory', getattr(torch.cuda.get_device_properties(0), 'total_mem', 0)) / 1e9, 1) if cuda_available else None,
         "hf_token_set": bool(hf_token),
         "hf_token_preview": f"{hf_token[:5]}...{hf_token[-4:]}" if hf_token else None,
         "pipeline_loaded": _pipeline is not None,
