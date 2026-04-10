@@ -64,5 +64,4 @@ jobs:
           # Add it as a repository secret: Settings → Secrets → Actions → HF_TOKEN
           secrets: |
             hf_token=${{ secrets.HF_TOKEN }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          no-cache: true
