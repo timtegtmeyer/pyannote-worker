@@ -62,7 +62,7 @@ def _load_pipeline() -> Pipeline:
     try:
         pipe = Pipeline.from_pretrained(
             "pyannote/speaker-diarization-3.1",
-            use_auth_token=hf_token,
+            token=hf_token,
         )
     except Exception as exc:
         _pipeline_load_error = f"Pipeline.from_pretrained failed: {exc}"
