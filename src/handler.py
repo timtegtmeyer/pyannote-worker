@@ -33,11 +33,11 @@ except (AttributeError, TypeError):
     pass
 
 from pyannote.audio import Pipeline
-from pyannote.audio.core.task import Specifications
+from pyannote.audio.core.task import Problem, Resolution, Specifications
 
-# PyTorch 2.6 defaults torch.load to weights_only=True, which rejects
-# pyannote checkpoint globals.  Allowlist the class we trust.
-torch.serialization.add_safe_globals([Specifications])
+# PyTorch 2.6+ defaults torch.load to weights_only=True, which rejects
+# pyannote checkpoint globals.  Allowlist the classes stored in checkpoints.
+torch.serialization.add_safe_globals([Specifications, Problem, Resolution])
 
 logging.basicConfig(
     level=logging.INFO,
