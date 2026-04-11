@@ -24,6 +24,14 @@ import logging
 import requests
 import runpod
 import torch
+
+# PyTorch 2.8+ defaults torch.load to weights_only=True, which breaks
+# pyannote's model loading. Allow the TorchVersion global used in checkpoints.
+try:
+    torch.serialization.add_safe_globals([torch.torch_version.TorchVersion])
+except (AttributeError, TypeError):
+    pass
+
 from pyannote.audio import Pipeline
 
 logging.basicConfig(
