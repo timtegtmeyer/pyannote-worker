@@ -1,6 +1,6 @@
-pyannote.audio>=3.3.1,<4.0
+pyannote.audio==3.3.2
 runpod>=1.6.0
 requests>=2.28.0
-huggingface-hub>=1.0.0
+huggingface-hub>=0.24.0,<1.0.0
 soundfile
 librosa

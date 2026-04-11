@@ -55,14 +55,18 @@ def _load_pipeline() -> Pipeline:
             "Set it in RunPod template settings -> Environment Variables."
         )
 
-    log.info("Loading pyannote/speaker-diarization-3.1 (HF_TOKEN: %s...%s)",
-             hf_token[:5], hf_token[-4:])
+    try:
+        from pyannote.audio import __version__ as pa_version
+    except ImportError:
+        pa_version = "unknown"
+    log.info("Loading pyannote/speaker-diarization-3.1 (pyannote.audio=%s, HF_TOKEN: %s...%s)",
+             pa_version, hf_token[:5], hf_token[-4:])
 
     start = time.time()
     try:
         pipe = Pipeline.from_pretrained(
             "pyannote/speaker-diarization-3.1",
-            token=hf_token,
+            use_auth_token=hf_token,
         )
     except Exception as exc:
         _pipeline_load_error = f"Pipeline.from_pretrained failed: {exc}"
