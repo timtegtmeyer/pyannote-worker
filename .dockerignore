@@ -1,0 +1,7 @@
+.git
+.github
+.env
+*.md
+tests/
+__pycache__/
+.last-digest
