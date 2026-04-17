@@ -193,7 +193,22 @@ def handler(job: dict) -> dict:
         log.info("[job:%s] Audio saved to %s (%.1f MB in %.1fs)",
                  job_id, tmp_path, bytes_written / 1e6, download_elapsed)
 
-        # Step 2: Run diarization
+        # Step 2: Convert to WAV (pyannote is ~5x faster on WAV vs MP3 — avoids per-chunk MP3 decode)
+        if not tmp_path.endswith(".wav"):
+            wav_path = tmp_path.rsplit(".", 1)[0] + ".wav"
+            log.info("[job:%s] Converting to WAV for faster processing...", job_id)
+            convert_start = time.time()
+            import subprocess
+            subprocess.run(
+                ["ffmpeg", "-y", "-i", tmp_path, "-ar", "16000", "-ac", "1", "-f", "wav", wav_path],
+                check=True, capture_output=True,
+            )
+            convert_elapsed = time.time() - convert_start
+            log.info("[job:%s] Converted to WAV in %.1fs", job_id, convert_elapsed)
+            os.unlink(tmp_path)
+            tmp_path = wav_path
+
+        # Step 3: Run diarization
         log.info("[job:%s] Loading pipeline...", job_id)
         pipeline = _load_pipeline()
 
