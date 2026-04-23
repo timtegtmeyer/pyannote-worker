@@ -1,4 +1,9 @@
-FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-runtime@sha256:c8268a92a69bd500f8be0e665b2630ee006dadaf7bfbc24249141b15ff622755
+# pyannote.audio 4.x pulls in torch==2.8.0 via its dependency chain (torchcodec,
+# torchaudio) and replaces the torch in the base image. torchvision 0.20 that
+# shipped with pytorch 2.5.1 is then incompatible with the new torch, causing a
+# circular-import crash at handler startup. Match the base image to torch 2.8
+# so torch + torchvision + torchaudio stay on the same major+minor.
+FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime
 
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
