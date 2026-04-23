@@ -14,8 +14,6 @@ if not hf_token:
     sys.exit(0)
 
 models = [
-    "pyannote/speaker-diarization-3.1",
-    "pyannote/segmentation-3.0",
     "pyannote/speaker-diarization-community-1",
 ]
 

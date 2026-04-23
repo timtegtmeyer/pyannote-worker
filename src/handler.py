@@ -72,13 +72,17 @@ def _load_pipeline() -> Pipeline:
         from pyannote.audio import __version__ as pa_version
     except ImportError:
         pa_version = "unknown"
-    log.info("Loading pyannote/speaker-diarization-3.1 (pyannote.audio=%s, HF_TOKEN: %s...%s)",
+    log.info("Loading pyannote/speaker-diarization-community-1 (pyannote.audio=%s, HF_TOKEN: %s...%s)",
              pa_version, hf_token[:5], hf_token[-4:])
 
     start = time.time()
     try:
+        # Community-1 replaces 3.1 (VBx clustering, better speaker counting +
+        # assignment, multilingual). Hugging Face's recommended drop-in; the
+        # downstream Transcription worker's legacy diarize() path already
+        # uses it. See PLAN-turn-recognition.md slice item 5.
         pipe = Pipeline.from_pretrained(
-            "pyannote/speaker-diarization-3.1",
+            "pyannote/speaker-diarization-community-1",
             use_auth_token=hf_token,
         )
     except Exception as exc:
@@ -217,9 +221,19 @@ def handler(job: dict) -> dict:
         diarization = pipeline(tmp_path)
         diarize_elapsed = time.time() - diarize_start
 
+        # Community-1 returns an output object with both regular and
+        # exclusive_speaker_diarization attributes. The exclusive variant
+        # removes overlapping speech regions (one speaker per frame), which
+        # is exactly what the downstream assign_speakers_from_turns() wants
+        # — our turn→word lookup is a single-speaker lookup, and mixed
+        # overlap regions would otherwise arbitrarily pick one speaker.
+        # Fall through to the Annotation directly when running against an
+        # older pyannote release that doesn't expose the attribute.
+        annotation = getattr(diarization, "exclusive_speaker_diarization", diarization)
+
         # Step 3: Extract segments
         segments = []
-        for turn, _, speaker in diarization.itertracks(yield_label=True):
+        for turn, _, speaker in annotation.itertracks(yield_label=True):
             segments.append(
                 {
                     "speaker": speaker,
