@@ -8,10 +8,17 @@ FROM pytorch/pytorch:2.8.0-cuda12.8-cudnn9-runtime
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
-# System deps: ffmpeg (required by pyannote/torchaudio), wget
+# System deps: wget, git.
+# FFmpeg comes from conda-forge (below) — Ubuntu 22.04's apt ffmpeg is 4.4,
+# which torchcodec's AudioDecoder hits with:
+#   RuntimeError: The frame has 0 channels, expected 1.
+# pyannote's release notes specifically call out ffmpeg>=6 for torchcodec.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ffmpeg wget git \
+    wget git \
     && rm -rf /var/lib/apt/lists/*
+
+# FFmpeg 6 (with matching libavutil.so.58) so torchcodec picks up libtorchcodec_core6.
+RUN conda install -y -c conda-forge 'ffmpeg=6' && conda clean -afy
 
 # Install Python dependencies
 COPY builder/requirements.txt /builder/requirements.txt
