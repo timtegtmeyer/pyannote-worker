@@ -15,6 +15,7 @@ if not hf_token:
 
 models = [
     "pyannote/speaker-diarization-community-1",
+    "pyannote/embedding",
 ]
 
 for model_id in models:
