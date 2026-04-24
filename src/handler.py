@@ -83,7 +83,7 @@ def _load_pipeline() -> Pipeline:
         # uses it. See PLAN-turn-recognition.md slice item 5.
         pipe = Pipeline.from_pretrained(
             "pyannote/speaker-diarization-community-1",
-            use_auth_token=hf_token,
+            token=hf_token,
         )
     except Exception as exc:
         _pipeline_load_error = f"Pipeline.from_pretrained failed: {exc}"
