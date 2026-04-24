@@ -25,6 +25,19 @@ import requests
 import runpod
 import torch
 
+
+def _gpu_name() -> str | None:
+    """Return the GPU's display name (e.g. 'NVIDIA GeForce RTX 4090') or None.
+    Saas-side cost calculation looks this up in the RunPod USD/hr map so
+    it charges the exact rate of the GPU the job actually ran on, instead
+    of guessing from the endpoint's gpuIds ladder."""
+    try:
+        if torch.cuda.is_available():
+            return torch.cuda.get_device_name(0)
+    except Exception:
+        pass
+    return None
+
 # PyTorch 2.8+ defaults torch.load to weights_only=True, which breaks
 # pyannote's model loading. Allow the TorchVersion global used in checkpoints.
 try:
@@ -250,6 +263,7 @@ def handler(job: dict) -> dict:
 
         return {
             "segments": segments,
+            "gpu_name": _gpu_name(),
             "diagnostics": {
                 "download_time_sec": round(download_elapsed, 1),
                 "diarization_time_sec": round(diarize_elapsed, 1),
